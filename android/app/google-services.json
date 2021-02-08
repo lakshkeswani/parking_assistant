@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "16164085284",
+    "project_id": "fir-practice-8cdc6",
+    "storage_bucket": "fir-practice-8cdc6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16164085284:android:31c24848a0bdad9342c2b1",
+        "android_client_info": {
+          "package_name": "com.example.parking_assistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "16164085284-ijunj28nsq9723cgpk7gg9abbrgq70sh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlMSAL1NT0KyHWkx6vVfNMRhEmBEyNwFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "16164085284-ijunj28nsq9723cgpk7gg9abbrgq70sh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16164085284:android:f6745dd20598b6ed42c2b1",
+        "android_client_info": {
+          "package_name": "com.laksh.firebasepractice2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "16164085284-ijunj28nsq9723cgpk7gg9abbrgq70sh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlMSAL1NT0KyHWkx6vVfNMRhEmBEyNwFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "16164085284-ijunj28nsq9723cgpk7gg9abbrgq70sh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
