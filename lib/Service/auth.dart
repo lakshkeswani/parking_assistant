@@ -4,9 +4,10 @@ import 'package:parking_assistant/model/user.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   //user object based on firebase user
   USer _userFromFirebaseUser(User user) {
-    return user != null ? USer(uid: user.uid) : null;
+    return user != null ? USer(uid: user.uid,email:user.email ) : null;
   }
 
   //auth change user stream
@@ -31,7 +32,6 @@ class AuthService {
   String verifyEmail ()
   {
     User user = FirebaseAuth.instance.currentUser;
-
     if (!user.emailVerified) {
       user.sendEmailVerification();
       return "not verified";

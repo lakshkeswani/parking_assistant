@@ -63,6 +63,7 @@ flutter:
      - images/car1.png
      - images/car.jpg
      - images/marker.png
+     - images/laksh.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

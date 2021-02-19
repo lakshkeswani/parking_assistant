@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 class USer {
   final String uid;
-  USer({this.uid});
+  final String email;
+  USer({this.uid,this.email});
 
 }
