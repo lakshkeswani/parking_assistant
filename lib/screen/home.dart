@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking_assistant/Service/auth.dart';
 import 'package:parking_assistant/Widgets/divider.dart';
 import 'package:parking_assistant/Widgets/mapsWidget.dart';
+import 'package:parking_assistant/Widgets/search.dart';
 import 'package:parking_assistant/model/infowindow.dart';
 import 'package:parking_assistant/model/user.dart';
 import 'package:provider/provider.dart';
@@ -119,6 +120,7 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.blue[600],
         title: Text("Parker"),
         actions: [
+          // ignore: deprecated_member_use
           FlatButton.icon(
             onPressed: () async {
               await _auth.signOut();
@@ -132,7 +134,7 @@ class _HomeState extends State<Home> {
           create: (context) => InfoWindowModel(context),
           child: Stack(
             children: [
-              Maps(),
+              gmaps(),
               Positioned(
                 left: 0.0,
                 right: 0.0,
@@ -174,7 +176,12 @@ class _HomeState extends State<Home> {
                           height: 20.0,
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Search()));
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,

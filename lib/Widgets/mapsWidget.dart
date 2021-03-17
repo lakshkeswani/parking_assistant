@@ -1,20 +1,18 @@
 import 'package:clippy_flutter/clippy_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking_assistant/model/infowindow.dart';
 import 'package:parking_assistant/model/parkingLocation.dart';
 import 'package:provider/provider.dart';
 
-class Maps extends StatefulWidget {
+class gmaps extends StatefulWidget {
   @override
-  _MapsState createState() => _MapsState();
+  _gmapsState createState() => _gmapsState();
 }
 
-
-
-class _MapsState extends State<Maps> {
+class _gmapsState extends State<gmaps> {
   BitmapDescriptor mapMarker;
   final double _infoWindowWidth = 250;
   final double _markerOffset = 170;
@@ -53,12 +51,13 @@ class _MapsState extends State<Maps> {
       }
     }
 
-    Position currentposition =  await Geolocator.getCurrentPosition();
-    print( currentposition.latitude.toString()+"     "+currentposition.longitude.toString() );
-    LatLng x =LatLng(currentposition.latitude, currentposition.longitude);
-     return x;
+    Position currentposition = await Geolocator.getCurrentPosition();
+    print(currentposition.latitude.toString() +
+        "     " +
+        currentposition.longitude.toString());
+    LatLng x = LatLng(currentposition.latitude, currentposition.longitude);
+    return x;
   }
-
 
   void initState() {
     setCustomMarker();
@@ -69,7 +68,7 @@ class _MapsState extends State<Maps> {
 
   void setCustomMarker() async {
     mapMarker = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(size: Size(1,1)), "images/car1.png");
+        ImageConfiguration(size: Size(1, 1)), "images/car1.png");
   }
 
   GoogleMapController mapController;
@@ -164,7 +163,8 @@ class _MapsState extends State<Maps> {
                                       width: 10,
                                     ),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           ProviderObject
@@ -175,17 +175,25 @@ class _MapsState extends State<Maps> {
                                             fontSize: 16,
                                           ),
                                         ),
-                                        IconTheme(data: IconThemeData(
-                                          color: Colors.red,
-                                          size:18,
-                                        ), child: Row(children:
-                                          List.generate(5, (index) => Icon(
-                                            index < ProviderObject.parkinglocation.rating ? Icons.star :Icons.star_border
-                                          ))
-                                        ,)),
+                                        IconTheme(
+                                            data: IconThemeData(
+                                              color: Colors.red,
+                                              size: 18,
+                                            ),
+                                            child: Row(
+                                              children: List.generate(
+                                                  5,
+                                                  (index) => Icon(index <
+                                                          ProviderObject
+                                                              .parkinglocation
+                                                              .rating
+                                                      ? Icons.star
+                                                      : Icons.star_border)),
+                                            )),
                                         FlatButton(
                                           onPressed: () {
-                                            Navigator.pushNamed(context, '/SlotView');
+                                            Navigator.pushNamed(
+                                                context, '/SlotView');
                                           },
                                           child: Text(
                                             "Book now",
@@ -201,13 +209,12 @@ class _MapsState extends State<Maps> {
                               ),
                               Triangle.isosceles(
                                 edge: Edge.BOTTOM,
-                               child: Container(
-                                 color: Colors.green,
-                                 width: 20,
-                                 height: 15,
-                               ),
+                                child: Container(
+                                  color: Colors.green,
+                                  width: 20,
+                                  height: 15,
+                                ),
                               ),
-
                             ],
                           ),
                         ),
@@ -237,16 +244,13 @@ class _MapsState extends State<Maps> {
           onMapCreated: (GoogleMapController controller) {
             mapController = controller;
           },
-
           myLocationButtonEnabled: true,
           myLocationEnabled: true,
-
           markers: _markers,
           initialCameraPosition: CameraPosition(
             target: LatLng(24.810029018425254, 67.03093547181592),
             zoom: 100,
           ),
-
         ),
       ),
     );
