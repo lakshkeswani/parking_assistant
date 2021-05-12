@@ -6,6 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking_assistant/model/infowindow.dart';
 import 'package:parking_assistant/model/parkingLocation.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'dart:async';
 
 class gmaps extends StatefulWidget {
   @override
@@ -13,6 +15,7 @@ class gmaps extends StatefulWidget {
 }
 
 class _gmapsState extends State<gmaps> {
+  final databaseReference = FirebaseDatabase.instance.reference();
   BitmapDescriptor mapMarker;
   final double _infoWindowWidth = 250;
   final double _markerOffset = 170;
@@ -52,16 +55,24 @@ class _gmapsState extends State<gmaps> {
     }
 
     Position currentposition = await Geolocator.getCurrentPosition();
+
     print(currentposition.latitude.toString() +
         "     " +
         currentposition.longitude.toString());
     LatLng x = LatLng(currentposition.latitude, currentposition.longitude);
+
+    databaseReference.child('location').update({
+      'lat': currentposition.latitude.toString(),
+      'long': currentposition.longitude.toString()
+    });
     return x;
   }
 
   void initState() {
     setCustomMarker();
-    _determinePosition();
+    Timer.periodic(Duration(seconds: 2), (timer) {
+      _determinePosition();
+    });
   }
 
   Set<Marker> _markers = {};
