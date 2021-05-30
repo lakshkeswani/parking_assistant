@@ -92,8 +92,8 @@ class _gmapsState extends State<gmaps> {
 
   void initState() {
     setCustomMarker();
-    _determinePosition();
-    getlocation();
+    //_determinePosition();
+    //getlocation();
     // getlocation();
     // Timer.periodic(Duration(seconds: 2), (timer) {
     //   _determinePosition();

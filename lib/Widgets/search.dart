@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:parking_assistant/Widgets/divider.dart';
+import 'package:parking_assistant/model/placepredictions.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -7,6 +11,8 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+  List<PlacePredictions> placePredictionsList;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +33,7 @@ class _SearchState extends State<Search> {
               ),
               child: Padding(
                 padding:
-                    EdgeInsets.only(left: 25, top: 20, right: 25, bottom: 20),
+                EdgeInsets.only(left: 25, top: 20, right: 25, bottom: 20),
                 child: Column(
                   children: [
                     SizedBox(
@@ -64,28 +70,28 @@ class _SearchState extends State<Search> {
                         ),
                         Expanded(
                             child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(3.0),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: "Pick Up",
-                                fillColor: Colors.grey[400],
-                                filled: true,
-                                border: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.only(
-                                  left: 11,
-                                  top: 8,
-                                  bottom: 8,
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(3.0),
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    hintText: "Pick Up",
+                                    fillColor: Colors.grey[400],
+                                    filled: true,
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.only(
+                                      left: 11,
+                                      top: 8,
+                                      bottom: 8,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ))
+                            ))
                       ],
                     ),
                     SizedBox(
@@ -102,15 +108,17 @@ class _SearchState extends State<Search> {
                         ),
                         Expanded(
                             child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(3.0),
-                            child: TextField(
-                              onChanged: (value) {
-                                findplace(value);
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(3.0),
+                                child: TextField(
+                                  onChanged: (value) {
+                                if (value != null) {
+                                  findplace(value);
+                                }
                               },
                               decoration: InputDecoration(
                                 hintText: " Where To",
@@ -123,15 +131,31 @@ class _SearchState extends State<Search> {
                                   top: 8,
                                   bottom: 8,
                                 ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ))
+                            ))
                       ],
                     ),
                   ],
                 ),
               )),
+          //tile for displying places
+          (placePredictionsList != null) ? Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: ListView.separated(
+              padding: EdgeInsets.all(0.0),
+              itemBuilder: (context, index) {
+                return PredictionTile(
+                  placepredictions: placePredictionsList[index],);
+              },
+              separatorBuilder: (BuildContext, int index) => DeviderWidget(),
+              itemCount: placePredictionsList.length,
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+            ),
+          ) : Container(),
         ],
       ),
     );
@@ -144,12 +168,70 @@ class _SearchState extends State<Search> {
           "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placename&key=$APIKEY&sessiontoken=1234567890&components=country:pk";
       var url = Uri.parse(autoCompleteUrl);
       var respose = await http.get(url);
+      var dresponse = jsonDecode(respose.body);
+      print(dresponse);
       if (respose == "failed") {
         return;
       } else {
-        print("response");
+        if (dresponse["status"] == "OK") {
+          var pridictions = dresponse["predictions"];
+          var placelist = (pridictions as List)
+              .map((e) => PlacePredictions.fromJson(e))
+              .toList();
+          setState(() {
+            placePredictionsList = placelist;
+          });
+        }
+        print("hello response");
         print(respose.body);
       }
     }
   }
 }
+
+class PredictionTile extends StatelessWidget {
+  const PredictionTile({Key key, this.placepredictions}) : super(key: key);
+  final PlacePredictions placepredictions;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {},
+      leading: Icon(Icons.add_location),
+      title: Text(
+        placepredictions.main_text,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: 16.0),
+      ),
+      subtitle: Text(
+        placepredictions.secondary_text,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: 12.0, color: Colors.grey),
+      ),
+    );
+  }
+
+  void getPlaceAddress() {
+    String placedetailURL =
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&fields=name,rating,formatted_phone_number&key=YOUR_API_KEY";
+  }
+}
+// Column(
+// children: [
+// SizedBox(width: 10.0,),
+// Row(
+// children: [Icon(Icons.add_location),SizedBox(width: 14.0,),
+// Expanded(
+// child: Column(
+// crossAxisAlignment: CrossAxisAlignment.start,
+// children: [
+// Text(placepredictions.main_text,overflow:TextOverflow.ellipsis,style: TextStyle(fontSize: 16.0), ),
+// SizedBox(height: 3.0,),
+// ],
+// ),
+// ),
+// ],
+// ),
+// SizedBox(width: 10.0,),
+// ],
+// ),
