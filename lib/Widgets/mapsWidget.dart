@@ -1,15 +1,23 @@
 import 'package:clippy_flutter/clippy_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking_assistant/model/infowindow.dart';
 import 'package:parking_assistant/model/parkingLocation.dart';
+import 'package:parking_assistant/model/user.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
+import 'package:flutter_geofire/flutter_geofire.dart';
 
 class gmaps extends StatefulWidget {
+  final USer CurrentUser;
+
+  const gmaps({this.CurrentUser});
+
   @override
   _gmapsState createState() => _gmapsState();
 }
@@ -59,19 +67,19 @@ class _gmapsState extends State<gmaps> {
     print(currentposition.latitude.toString() +
         "     " +
         currentposition.longitude.toString());
-    LatLng x = LatLng(currentposition.latitude, currentposition.longitude);
+    Geofire.setLocation(widget.CurrentUser.uid, currentposition.latitude,
+        currentposition.longitude);
+    Geofire.initialize("Available users");
 
-    databaseReference.child('location').update({
-      'lat': currentposition.latitude.toString(),
-      'long': currentposition.longitude.toString()
-    });
-    return x;
+    return null;
   }
 
-  void initState() {
-    setCustomMarker();
-    Timer.periodic(Duration(seconds: 2), (timer) {
-      _determinePosition();
+  void getlocation() {
+    StreamSubscription<Position> UserPositionSubscriptions;
+    UserPositionSubscriptions =
+        Geolocator.getPositionStream().listen((Position UserPosition) {
+      Geofire.setLocation(widget.CurrentUser.uid, UserPosition.latitude,
+          UserPosition.longitude);
     });
   }
 
@@ -80,6 +88,16 @@ class _gmapsState extends State<gmaps> {
   void setCustomMarker() async {
     mapMarker = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(size: Size(1, 1)), "images/car1.png");
+  }
+
+  void initState() {
+    setCustomMarker();
+    _determinePosition();
+    getlocation();
+    // getlocation();
+    // Timer.periodic(Duration(seconds: 2), (timer) {
+    //   _determinePosition();
+    // });
   }
 
   GoogleMapController mapController;
@@ -115,7 +133,7 @@ class _gmapsState extends State<gmaps> {
         Marker(
             markerId: MarkerId(value.locationName),
             position: value.location,
-            icon: mapMarker,
+            //   icon: mapMarker,
             onTap: () {
               ProviderObject.updateInfoWindow(context, mapController,
                   value.location, _infoWindowWidth, _markerOffset);

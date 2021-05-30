@@ -45,6 +45,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<USer>(context);
     return Scaffold(
       backgroundColor: Colors.red[60],
       drawer: Container(
@@ -134,7 +135,9 @@ class _HomeState extends State<Home> {
           create: (context) => InfoWindowModel(context),
           child: Stack(
             children: [
-              gmaps(),
+              gmaps(
+                CurrentUser: user,
+              ),
               Positioned(
                 left: 0.0,
                 right: 0.0,

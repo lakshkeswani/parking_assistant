@@ -13,8 +13,9 @@
         android:label="parking asistant"
         android:icon="@mipmap/ic_launcher">
 
-        <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD8zOFaOdRhqvkSrcLrnWqTzpEkFbh4sz0"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCFfiw05_LDHtbJoGPA3AkrEy7YxET6VIg" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

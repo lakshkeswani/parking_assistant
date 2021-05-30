@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Search extends StatefulWidget {
   @override
@@ -108,6 +109,9 @@ class _SearchState extends State<Search> {
                           child: Padding(
                             padding: EdgeInsets.all(3.0),
                             child: TextField(
+                              onChanged: (value) {
+                                findplace(value);
+                              },
                               decoration: InputDecoration(
                                 hintText: " Where To",
                                 fillColor: Colors.grey[400],
@@ -131,5 +135,21 @@ class _SearchState extends State<Search> {
         ],
       ),
     );
+  }
+
+  void findplace(String placename) async {
+    String APIKEY = "AIzaSyCFfiw05_LDHtbJoGPA3AkrEy7YxET6VIg";
+    if (placename.length > 1) {
+      String autoCompleteUrl =
+          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placename&key=$APIKEY&sessiontoken=1234567890&components=country:pk";
+      var url = Uri.parse(autoCompleteUrl);
+      var respose = await http.get(url);
+      if (respose == "failed") {
+        return;
+      } else {
+        print("response");
+        print(respose.body);
+      }
+    }
   }
 }
