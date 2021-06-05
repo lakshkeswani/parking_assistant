@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => Register(),
         '/signin': (context) => SignIn(),
         '/SlotView': (context) => SlotView(),
-            // 'finalizebooking':(context) => FinalizeBooking()
+            'finalizebooking':(context) => FinalizeBooking()
       })),
     );
   }
