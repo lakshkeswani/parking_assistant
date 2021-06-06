@@ -2,7 +2,6 @@ import 'package:clippy_flutter/clippy_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:parking_assistant/model/infowindow.dart';
@@ -87,7 +86,7 @@ class _gmapsState extends State<gmaps> {
 
   void setCustomMarker() async {
     mapMarker = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(size: Size(1, 1)), "images/car1.png");
+        ImageConfiguration(devicePixelRatio: 2.5), "images/car1.png");
   }
 
   void initState() {

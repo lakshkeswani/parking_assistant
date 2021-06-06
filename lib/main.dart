@@ -9,7 +9,6 @@ import 'package:parking_assistant/screen/home.dart';
 import 'package:parking_assistant/screen/slotsView.dart';
 import 'package:parking_assistant/screen/wrapper.dart';
 import 'package:provider/provider.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
