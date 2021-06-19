@@ -38,6 +38,9 @@ dependencies:
   flutter_geofire: ^2.0.0
   pay: ^1.0.2
   http: ^0.13.3
+  syncfusion_flutter_datepicker: ^19.1.67-beta
+  intl: ^0.17.0
+  date_format: ^2.0.2
 
 dev_dependencies:
   flutter_test:

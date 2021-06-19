@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
 import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class gmaps extends StatefulWidget {
   final USer CurrentUser;
@@ -218,6 +219,7 @@ class _gmapsState extends State<gmaps> {
                                                       ? Icons.star
                                                       : Icons.star_border)),
                                             )),
+                                        // ignore: deprecated_member_use
                                         FlatButton(
                                           onPressed: () {
                                             Navigator.pushNamed(

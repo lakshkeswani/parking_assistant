@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:parking_assistant/model/adress';
 import 'package:parking_assistant/Widgets/divider.dart';
 import 'package:parking_assistant/model/placepredictions.dart';
+
+String APIKEY = "AIzaSyCFfiw05_LDHtbJoGPA3AkrEy7YxET6VIg";
 
 class Search extends StatefulWidget {
   @override
@@ -162,7 +165,6 @@ class _SearchState extends State<Search> {
   }
 
   void findplace(String placename) async {
-    String APIKEY = "AIzaSyCFfiw05_LDHtbJoGPA3AkrEy7YxET6VIg";
     if (placename.length > 1) {
       String autoCompleteUrl =
           "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$placename&key=$APIKEY&sessiontoken=1234567890&components=country:pk";
@@ -211,9 +213,17 @@ class PredictionTile extends StatelessWidget {
     );
   }
 
-  void getPlaceAddress() {
+  void getPlaceAddress(String Placeid) async {
     String placedetailURL =
-        "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&fields=name,rating,formatted_phone_number&key=YOUR_API_KEY";
+        "https://maps.googleapis.com/maps/api/place/details/json?place_id=$Placeid&key=$APIKEY";
+    var url = Uri.parse(placedetailURL);
+
+    var response = await http.get(url);
+    var dresponse = jsonDecode(response.body);
+    Adress address = Adress();
+    if (dresponse["status"] == "OK") {
+      address = adressFromJson(response.toString());
+    }
   }
 }
 // Column(

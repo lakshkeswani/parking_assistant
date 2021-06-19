@@ -6,13 +6,24 @@ class FinalizeBooking extends StatefulWidget {
 }
 
 class _FinalizeBookingState extends State<FinalizeBooking> {
-  final _paymentItems=<PaymentItem>[];
+  final _paymentItems = <PaymentItem>[];
+
+  @override
+  void initState() {
+    _paymentItems.add(PaymentItem(
+        amount: "50", label: "Ticket", status: PaymentItemStatus.final_price));
+
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    _paymentItems.add(PaymentItem(amount: "50",label: "Ticket"));
     return Scaffold(
-      appBar: AppBar(title: Text("Parking Asist"),),
-      body:  Column(
+      appBar: AppBar(
+        title: Text("Parking Asist"),
+      ),
+      body: Column(
         children: [
           Container(
             child: Text("Are You sure"),
@@ -26,9 +37,7 @@ class _FinalizeBookingState extends State<FinalizeBooking> {
               style: GooglePayButtonStyle.black,
               type: GooglePayButtonType.pay,
               margin: const EdgeInsets.only(top: 15.0),
-              onPaymentResult: (value){
-
-              },
+              onPaymentResult: (val) {},
               loadingIndicator: const Center(
                 child: CircularProgressIndicator(),
               ),

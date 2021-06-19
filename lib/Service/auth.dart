@@ -38,7 +38,6 @@ class AuthService {
     }
     else
       return "";
-
   }
 
   //signin
@@ -58,10 +57,11 @@ class AuthService {
   // register with email and password
   Future RegisterUser(String email,String password) async {
     try {
-      UserCredential response = await _auth.createUserWithEmailAndPassword(email:email , password: password);
-    User user=response.user;
-     await verifyEmail();
-    return _userFromFirebaseUser(user);
+      UserCredential response = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      User user = response.user;
+      await verifyEmail();
+      return _userFromFirebaseUser(user);
     } catch (e) {
        print(e.toString()+"wrong  ... . .. . . .cdcdcd");
        return null;
