@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:parking_assistant/Service/asistant.dart';
 import 'package:parking_assistant/Service/auth.dart';
 import 'package:parking_assistant/Widgets/divider.dart';
 import 'package:parking_assistant/Widgets/mapsWidget.dart';
+import 'package:parking_assistant/Widgets/progressdailog.dart';
 import 'package:parking_assistant/Widgets/search.dart';
+import 'package:parking_assistant/controllers/appdata.dart';
+import 'package:parking_assistant/model/address.dart';
 import 'package:parking_assistant/model/infowindow.dart';
 import 'package:parking_assistant/model/user.dart';
 import 'package:provider/provider.dart';
@@ -19,10 +24,82 @@ BitmapDescriptor mapMarker;
 
 class _HomeState extends State<Home> {
   var geolocator = Geolocator();
-  Position currentposition;
+  List<LatLng> plineCordinates = [];
+  Set<Polyline> polylineSet = {};
 
+  Future<void> getdirection() async {
+    Address pickup = Provider.of<AppData>(context, listen: false).pickup;
+    Address dropoff = Provider.of<AppData>(context, listen: false).dropoff;
+
+    LatLng pickupLatLng = LatLng(pickup.latitude, pickup.longitude);
+    LatLng dropoffLatLng = LatLng(dropoff.latitude, dropoff.longitude);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => ProgresDailog(
+              message: "direction",
+            ));
+
+    var details =
+        await AsistantMethods.asistantDirectionApi(pickupLatLng, dropoffLatLng);
+
+    Navigator.pop(context);
+    print("details" + details.encodedPionts);
+
+    PolylinePoints polylinePoints = PolylinePoints();
+    List<PointLatLng> decodePloylinePointsResult =
+        polylinePoints.decodePolyline(details.encodedPionts);
+    plineCordinates.clear();
+    if (decodePloylinePointsResult.isNotEmpty) {
+      decodePloylinePointsResult.forEach((pointLatLang) {
+        plineCordinates
+            .add(LatLng(pointLatLang.latitude, pointLatLang.longitude));
+      });
+    }
+    polylineSet.clear();
+    setState(() {
+      Polyline ployline = Polyline(
+          polylineId: PolylineId("PolylineId"),
+          color: Colors.pink,
+          jointType: JointType.round,
+          width: 5,
+          startCap: Cap.roundCap,
+          endCap: Cap.roundCap,
+          points: plineCordinates);
+      polylineSet.add(ployline);
+    });
+    LatLngBounds latLngBounds;
+
+    if (pickup.latitude > dropoff.latitude &&
+        pickup.longitude > dropoff.longitude) {
+      latLngBounds =
+          LatLngBounds(southwest: dropoffLatLng, northeast: pickupLatLng);
+    } else if (pickup.longitude > dropoff.longitude) {
+      latLngBounds = LatLngBounds(
+          northeast: LatLng(dropoffLatLng.latitude, pickupLatLng.longitude),
+          southwest: LatLng(pickupLatLng.latitude, dropoffLatLng.latitude));
+    } else if (pickup.latitude > dropoff.latitude) {
+      latLngBounds = LatLngBounds(
+          southwest: LatLng(dropoffLatLng.latitude, pickupLatLng.longitude),
+          northeast: LatLng(pickupLatLng.latitude, dropoffLatLng.latitude));
+    } else {
+      latLngBounds =
+          LatLngBounds(southwest: pickupLatLng, northeast: dropoffLatLng);
+    }
+    setState(() {
+      update = true;
+      cameraUpdate = CameraUpdate.newLatLngBounds(latLngBounds, 17);
+      PickUp = pickupLatLng;
+      DropOff = dropoffLatLng;
+    });
+  }
+
+  Position currentposition;
+  LatLng PickUp, DropOff;
   final AuthService _auth = AuthService();
   String verifed = "";
+  CameraUpdate cameraUpdate;
+  bool update = false;
+
   void initState() {
     dynamic x = _auth.verifyEmail();
     verifed = x.toString();
@@ -137,6 +214,11 @@ class _HomeState extends State<Home> {
             children: [
               gmaps(
                 CurrentUser: user,
+                polylineSet: polylineSet,
+                update: update,
+                cameraUpdate: cameraUpdate,
+                pickup: PickUp,
+                dropoff: DropOff,
               ),
               Positioned(
                 left: 0.0,
@@ -179,11 +261,15 @@ class _HomeState extends State<Home> {
                           height: 20.0,
                         ),
                         GestureDetector(
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            var res = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => Search()));
+
+                            if (res == "gotdirection") {
+                              await getdirection();
+                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(

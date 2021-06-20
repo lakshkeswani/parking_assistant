@@ -7,7 +7,7 @@ class PlacePredictions {
 
   PlacePredictions.fromJson(Map<String, dynamic> json) {
     secondary_text = json["structured_formatting"]["secondary_text"];
-    place_id = json["structured_formatting"]["place_id"];
+    place_id = json["place_id"];
     main_text = json["structured_formatting"]["main_text"];
   }
 }

@@ -2,9 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:parking_assistant/model/adress';
+import 'package:parking_assistant/Widgets/progressdailog.dart';
+import 'package:parking_assistant/controllers/appdata.dart';
+import 'package:parking_assistant/controllers/direction%20controller.dart';
+import 'package:parking_assistant/model/address.dart';
 import 'package:parking_assistant/Widgets/divider.dart';
 import 'package:parking_assistant/model/placepredictions.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 String APIKEY = "AIzaSyCFfiw05_LDHtbJoGPA3AkrEy7YxET6VIg";
 
@@ -46,7 +51,7 @@ class _SearchState extends State<Search> {
                       children: [
                         GestureDetector(
                           child: Icon(Icons.arrow_back),
-                          onTap: () {
+                          onTap: () async {
                             Navigator.pop(context);
                           },
                         ),
@@ -184,46 +189,70 @@ class _SearchState extends State<Search> {
             placePredictionsList = placelist;
           });
         }
-        print("hello response");
-        print(respose.body);
+        ;
       }
     }
   }
 }
 
-class PredictionTile extends StatelessWidget {
+class PredictionTile extends StatefulWidget {
   const PredictionTile({Key key, this.placepredictions}) : super(key: key);
   final PlacePredictions placepredictions;
 
   @override
+  _PredictionTileState createState() => _PredictionTileState();
+}
+
+class _PredictionTileState extends State<PredictionTile> {
+  DirectionController directionController = Get.find(tag: "directiondetails");
+
+  @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {},
+      onTap: () async {
+        print("id by laksh " + widget.placepredictions.place_id);
+
+        await getPlaceAddress(widget.placepredictions.place_id, context);
+      },
       leading: Icon(Icons.add_location),
       title: Text(
-        placepredictions.main_text,
+        widget.placepredictions.main_text,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(fontSize: 16.0),
       ),
       subtitle: Text(
-        placepredictions.secondary_text,
+        widget.placepredictions.secondary_text,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(fontSize: 12.0, color: Colors.grey),
       ),
     );
   }
 
-  void getPlaceAddress(String Placeid) async {
+  void getPlaceAddress(String Placeid, context) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => ProgresDailog(
+              message: "Drop off",
+            ));
     String placedetailURL =
         "https://maps.googleapis.com/maps/api/place/details/json?place_id=$Placeid&key=$APIKEY";
     var url = Uri.parse(placedetailURL);
-
     var response = await http.get(url);
+    Navigator.pop(context);
     var dresponse = jsonDecode(response.body);
-    Adress address = Adress();
-    if (dresponse["status"] == "OK") {
-      address = adressFromJson(response.toString());
+    Address address;
+    if (response == "failed") {
+      return;
     }
+    if (dresponse["status"] == "OK") {
+      address = Address.fromJson(dresponse);
+      print("lat of address" + address.latitude.toString());
+      Provider.of<AppData>(context, listen: false).updatedropoff(address);
+      print("place name Laksh    " + Placeid.toString());
+
+      Navigator.pop(context, "gotdirection");
+    }
+    print("place name Laksh    " + Placeid.toString());
   }
 }
 // Column(

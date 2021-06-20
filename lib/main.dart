@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:parking_assistant/Service/auth.dart';
 import 'package:parking_assistant/authenticate/register.dart';
 import 'package:parking_assistant/authenticate/signin.dart';
+import 'package:parking_assistant/controllers/appdata.dart';
 import 'package:parking_assistant/model/user.dart';
 import 'package:parking_assistant/screen/finalizebooking.dart';
 import 'package:parking_assistant/screen/home.dart';
@@ -12,14 +13,22 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  ;
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<USer>.value(
-      value: AuthService().user,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppData>(
+          create: (_) => AppData(),
+        ),
+        StreamProvider<USer>.value(
+          value: AuthService().user,
+        )
+      ],
       child:
           (MaterialApp(title: 'parking assistant', initialRoute: '/', routes: {
         '/': (context) => Wrapper(),
@@ -27,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => Register(),
         '/signin': (context) => SignIn(),
         '/SlotView': (context) => SlotView(),
-         'finalizebooking': (context) => FinalizeBooking()
+        'finalizebooking': (context) => FinalizeBooking()
       })),
     );
   }
