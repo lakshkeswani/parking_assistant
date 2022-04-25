@@ -1,7 +1,7 @@
 name: parking_assistant
 description: A new Flutter application for parking asistant.
 
-# The following line prevents the package from being accidentally published to
+# The following line prevents the package from being accidentally published to testing for grpc opensource contributions
 # pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # The following defines the version and build number for your application.
